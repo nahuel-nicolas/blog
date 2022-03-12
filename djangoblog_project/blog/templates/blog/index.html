@@ -1,0 +1,3 @@
+{% for currentPost in posts %}
+    <li><a href="{% url 'blog:post' currentPost.slug %}">{{ currentPost.title }}</a></li>
+{% endfor %}
