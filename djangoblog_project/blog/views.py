@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Post
 from django.views import generic
+from .forms import PostForm
+from django.urls import reverse
 
 
 # def index(request):
@@ -22,5 +24,14 @@ class PostView(generic.DetailView):
     model = Post
     template_name = 'blog/post.html'
     context_object_name = 'currentPost'
+
+class CreatePostView(generic.CreateView):
+    # redirect_field_name = 'blog/index.html'
+    template_name = 'blog/write.html'
+    form_class = PostForm
+    model = Post
+
+    def get_success_url(self): # new
+        return reverse('blog:index')
 
 # Create your views here.
