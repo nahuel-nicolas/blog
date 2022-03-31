@@ -4,6 +4,7 @@ from .models import Post
 from django.views import generic
 from .forms import PostForm
 from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # def index(request):
@@ -17,21 +18,18 @@ from django.urls import reverse
 # https://docs.djangoproject.com/en/4.0/topics/class-based-views/generic-display/
 class PostListView(generic.ListView):
     model = Post
-    template_name = 'blog/index.html'
-    context_object_name = 'posts' # by default object_list
 
 class PostView(generic.DetailView):
     model = Post
-    template_name = 'blog/post.html'
-    context_object_name = 'currentPost'
 
-class CreatePostView(generic.CreateView):
-    # redirect_field_name = 'blog/index.html'
-    template_name = 'blog/write.html'
+class CreatePostView(LoginRequiredMixin, generic.CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'blog/post_detail.html'
+    
     form_class = PostForm
     model = Post
 
-    def get_success_url(self): # new
-        return reverse('blog:index')
+    # def get_success_url(self): 
+    #     return reverse('blog:index')
 
 # Create your views here.
