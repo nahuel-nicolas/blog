@@ -5,11 +5,11 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <title>Blog Project</title>
   </head>
-  <body class='loader'>
-    <nav class="navbar navbar-expand-lg bg-light techfont">
+  <body>
+    <nav>
       <div class="container">
         <div>
-          <a href="{% url 'blog:post_list' %}">My Tech blog</a>
+          <a href="{% url 'blog:post_list' %}">Index</a>
         </div>
         <div>
           {% if user.is_authenticated %}

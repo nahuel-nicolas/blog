@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Post
+from .models import Post, Comment
 from django.views import generic
-from .forms import PostForm
-from django.urls import reverse
+from .forms import PostForm, CommentForm
+from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -22,14 +23,39 @@ class PostListView(generic.ListView):
 class PostView(generic.DetailView):
     model = Post
 
-class CreatePostView(LoginRequiredMixin, generic.CreateView):
+class PostUpdateView(LoginRequiredMixin, generic.UpdateView):
     login_url = '/login/'
     redirect_field_name = 'blog/post_detail.html'
-    
     form_class = PostForm
     model = Post
 
-    # def get_success_url(self): 
-    #     return reverse('blog:index')
+class CreatePostView(LoginRequiredMixin, generic.CreateView):
+    login_url = '/login/'
+    redirect_field_name = 'blog/post_detail.html'
+    form_class = PostForm
+    model = Post
 
-# Create your views here.
+class PostDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Post
+    success_url = reverse_lazy('blog:post_list')
+
+@login_required
+def add_comment_to_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+            return redirect('blog:post_detail', post.slug)
+    else:
+        form = CommentForm()
+    return render(request, 'blog/comment_form.html', {'form': form})
+
+@login_required
+def comment_remove(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    post_slug = comment.post.slug
+    comment.delete()
+    return redirect('blog:post_detail', post_slug)
