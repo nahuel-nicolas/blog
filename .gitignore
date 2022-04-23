@@ -1,4 +1,6 @@
 *.pyc
-migrations/
 __pycache__/
 venv/
+*.sqlite3
+*.lnk
+*.code-workspace
